@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Druck Kostenrechner</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>3D Druck Kostenrechner</h1>
+
+    <form method="POST" action="/">
+        <label>Seiten:</label><br>
+        <input type="number" name="pages"><br>
+        <label>Kopien:</label><br>
+        <input type="number" name="copies"><br>
+        <label>Farbe:</label><br>
+        <select name="color">
+            <option value="Schwarzweiß">Schwarzweiß</option>
+            <option value="Farbe">Farbe</option>
+        </select><br>
+        <label>Papier:</label><br>
+        <select name="paper">
+            <option value="Normal">Normal</option>
+            <option value="Hochglanz">Hochglanz</option>
+            <option value="Recycling">Recycling</option>
+        </select><br><br>
+
+        <label>Material:</label><br>
+        <select name="material">
+            {% for name, price in materials %}
+                <option value="{{ name }}" {% if selected_material == name %}selected{% endif %}>
+                    {{ name }} ({{ price }}€)
+                </option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Extra Teil (z. B. Schraube):</label><br>
+        <select name="part">
+            {% for name, price in parts %}
+                <option value="{{ name }}" {% if selected_part == name %}selected{% endif %}>
+                    {{ name }} ({{ price }}€)
+                </option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit">Berechnen</button>
+    </form>
+
+    {% if result %}
+        <h2>Ergebnis</h2>
+        <p>Druckkosten: {{ result.print_cost }}€</p>
+        <p>Materialkosten: {{ result.material_cost }}€</p>
+        <p>Teilekosten: {{ result.part_cost }}€</p>
+        <p><strong>Gesamtkosten: {{ result.total }}€</strong></p>
+    {% endif %}
+
+    <h3>Material hinzufügen</h3>
+    <form method="POST" action="/add_material">
+        <label>Name:</label><br>
+        <input type="text" name="material_name"><br>
+        <label>Preis:</label><br>
+        <input type="number" step="0.01" name="material_price"><br>
+        <button type="submit">Speichern</button>
+    </form>
+
+    <h3>Teil hinzufügen</h3>
+    <form method="POST" action="/add_part">
+        <label>Name:</label><br>
+        <input type="text" name="part_name"><br>
+        <label>Preis:</label><br>
+        <input type="number" step="0.01" name="part_price"><br>
+        <button type="submit">Speichern</button>
+    </form>
+</body>
+</html>
